@@ -37,7 +37,7 @@ curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/insta
 ## Workflow
 
 ```
-Fresh Proxmox Host                          Running VMs
+Fresh Debian/Proxmox Host                   Running VMs
        │                                         ▲
        │  curl|bash                              │
        ▼                                         │
