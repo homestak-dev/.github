@@ -1,6 +1,12 @@
 # homestak-dev
 
-Infrastructure-as-Code for Proxmox VE environments.
+**Homelab infrastructure, automated.**
+
+![Ansible](https://img.shields.io/badge/Ansible-EE0000?logo=ansible&logoColor=white)
+![OpenTofu](https://img.shields.io/badge/OpenTofu-813cf3?logo=opentofu&logoColor=white)
+![Packer](https://img.shields.io/badge/Packer-02A8EF?logo=packer&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue)
 
 ## Quick Start
 
@@ -8,30 +14,58 @@ Infrastructure-as-Code for Proxmox VE environments.
 curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/install.sh | bash
 ```
 
-This installs the `homestak` CLI for managing Proxmox infrastructure.
+## How It Works
+
+```
+                    ┌─────────────┐
+                    │  bootstrap  │  ← curl|bash entry point
+                    └──────┬──────┘
+                           │
+           ┌───────────────┼───────────────┐
+           ▼               ▼               ▼
+    ┌──────────┐    ┌─────────────┐    ┌──────────┐
+    │  ansible │◄──►│ iac-driver  │◄──►│   tofu   │
+    │ configure│    │ orchestrate │    │ provision│
+    └──────────┘    └─────────────┘    └──────────┘
+                           │
+                           ▼
+                    ┌──────────┐
+                    │  packer  │  (optional)
+                    └──────────┘
+```
+
+## Workflow
+
+```
+Fresh Proxmox Host                          Running VMs
+       │                                         ▲
+       │  curl|bash                              │
+       ▼                                         │
+ ┌───────────┐    ┌───────────┐    ┌───────────┐
+ │ bootstrap │───►│  ansible  │───►│   tofu    │
+ │  install  │    │ configure │    │ provision │
+ └───────────┘    └───────────┘    └───────────┘
+```
+
+## What You Can Do
+
+```bash
+homestak pve-setup                    # Configure Proxmox host
+homestak scenario simple-vm-roundtrip # Provision → verify → destroy VM
+homestak playbook user -e local_user=me
+homestak status                       # Check installation
+```
 
 ## Repositories
 
 | Repo | Purpose |
 |------|---------|
-| [bootstrap](https://github.com/homestak-dev/bootstrap) | Entry point - curl\|bash setup and `homestak` CLI |
-| [ansible](https://github.com/homestak-dev/ansible) | Proxmox host configuration and PVE installation |
-| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestration engine and E2E testing |
-| [tofu](https://github.com/homestak-dev/tofu) | VM provisioning with OpenTofu |
-| [packer](https://github.com/homestak-dev/packer) | Custom Debian cloud images (optional) |
-
-## Architecture
-
-```
-bootstrap → clones ansible, iac-driver, tofu
-         → installs 'homestak' CLI
-         → runs 'make install-deps' per repo
-
-homestak pve-setup      # Configure Proxmox host
-homestak scenario ...   # Run orchestration workflows
-homestak status         # Show installation status
-```
+| [bootstrap](https://github.com/homestak-dev/bootstrap) | Entry point - installs `homestak` CLI and core repos |
+| [ansible](https://github.com/homestak-dev/ansible) | Configure PVE hosts, install Proxmox on Debian |
+| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestrate multi-step workflows |
+| [tofu](https://github.com/homestak-dev/tofu) | Provision VMs with OpenTofu |
+| [packer](https://github.com/homestak-dev/packer) | Build custom Debian cloud images (optional) |
 
 ## License
 
-All repositories are licensed under Apache 2.0.
+Apache 2.0
