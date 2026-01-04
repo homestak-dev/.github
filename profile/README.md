@@ -21,17 +21,20 @@ curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/insta
                     │  bootstrap  │  ← curl|bash entry point
                     └──────┬──────┘
                            │
-           ┌───────────────┼───────────────┐
-           ▼               ▼               ▼
-    ┌──────────┐    ┌─────────────┐    ┌──────────┐
-    │  ansible │◄──►│ iac-driver  │◄──►│   tofu   │
-    │ configure│    │ orchestrate │    │ provision│
-    └──────────┘    └─────────────┘    └──────────┘
-                           │
-                           ▼
-                    ┌──────────┐
-                    │  packer  │  (optional)
-                    └──────────┘
+    ┌──────────────────────┼──────────────────────┐
+    │                      │                      │
+    ▼                      ▼                      ▼
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ site-config │    │ iac-driver  │    │   ansible   │
+│   secrets   │◄──►│ orchestrate │◄──►│  configure  │
+└─────────────┘    └──────┬──────┘    └─────────────┘
+                          │
+            ┌─────────────┼─────────────┐
+            ▼                           ▼
+     ┌──────────┐                ┌──────────┐
+     │   tofu   │                │  packer  │  (optional)
+     │ provision│                │   build  │
+     └──────────┘                └──────────┘
 ```
 
 ## Workflow
@@ -61,6 +64,7 @@ homestak status                       # Check installation
 | Repo | Purpose |
 |------|---------|
 | [bootstrap](https://github.com/homestak-dev/bootstrap) | Entry point - installs `homestak` CLI and core repos |
+| [site-config](https://github.com/homestak-dev/site-config) | Site-specific secrets and configuration (SOPS + age) |
 | [ansible](https://github.com/homestak-dev/ansible) | Configure PVE hosts, install Proxmox on Debian |
 | [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestrate multi-step workflows |
 | [tofu](https://github.com/homestak-dev/tofu) | Provision VMs with OpenTofu |
