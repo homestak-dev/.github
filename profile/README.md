@@ -2,7 +2,6 @@
 
 **Homelab infrastructure, automated.**
 
-![Release](https://img.shields.io/github/v/release/homestak-dev/bootstrap?include_prereleases&label=release)
 ![Ansible](https://img.shields.io/badge/Ansible-EE0000?logo=ansible&logoColor=white)
 ![OpenTofu](https://img.shields.io/badge/OpenTofu-813cf3?logo=opentofu&logoColor=white)
 ![Packer](https://img.shields.io/badge/Packer-02A8EF?logo=packer&logoColor=white)
@@ -18,48 +17,63 @@ curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/insta
 ## Architecture
 
 ```
-                    ┌─────────────┐
-                    │  bootstrap  │  ← curl|bash entry point
-                    └──────┬──────┘
-                           │ clones
-    ┌──────────────────────┼──────────────────────┐
-    │                      │                      │
-    ▼                      ▼                      ▼
-┌─────────────┐    ┌─────────────┐        ┌─────────────┐
-│ site-config │    │ iac-driver  │        │   ansible   │
-│ ┌─────────┐ │    │ orchestrate │        │  configure  │
-│ │ hosts/  │ │    └──────┬──────┘        └─────────────┘
-│ │ nodes/  │ │           │
-│ │ envs/   │◄├───────────┼───────────────────────┐
-│ │secrets  │ │           │                       │
-│ └─────────┘ │           │                       │
-└─────────────┘           │                       │
-       ▲          ┌───────┴───────┐               │
-       │          ▼               ▼               │
-       │   ┌──────────┐    ┌──────────┐           │
-       └───┤   tofu   │    │  packer  │ (optional)│
-           │ provision│    │   build  │           │
-           └──────────┘    └──────────┘           │
-                 │                                │
-                 └────────────────────────────────┘
-                        config-loader reads
-                        YAML configuration
+                     ┌─────────────┐
+                     │  bootstrap  │  curl|bash entry point
+                     └──────┬──────┘
+                            │
+     ┌──────────────────────┼──────────────────────┐
+     │                      │                      │
+     ▼                      ▼                      ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│ site-config │     │ iac-driver  │     │   ansible   │
+│   4NF YAML  │────▶│ orchestrate │◀───▶│  configure  │
+└─────────────┘     └──────┬──────┘     └─────────────┘
+                           │
+                    ConfigResolver
+                           │
+             ┌─────────────┴─────────────┐
+             ▼                           ▼
+      ┌──────────┐                ┌──────────┐
+      │   tofu   │                │  packer  │
+      │ provision│                │   build  │
+      └──────────┘                └──────────┘
 ```
 
 ## Configuration Model
 
-Site-specific settings live in `site-config/` using normalized YAML (4NF):
+site-config uses a normalized 4-entity YAML structure:
 
 ```
 site-config/
-├── site.yaml        # Defaults (timezone, domain, datastore)
-├── secrets.yaml     # Encrypted with SOPS + age
-├── hosts/           # Physical machines (Ansible)
-│   └── {host}.yaml
-├── nodes/           # PVE instances (Tofu API access)
-│   └── {node}.yaml
-└── envs/            # Deployment topologies
-    └── {env}.yaml
+├── site.yaml              # Site-wide defaults
+├── secrets.yaml           # Encrypted (SOPS + age)
+├── hosts/                 # Physical machines (SSH access)
+├── nodes/                 # PVE instances (API access)
+├── vms/                   # VM templates + size presets
+│   └── presets/           # xsmall, small, medium, large, xlarge
+└── envs/                  # Deployment topologies (node-agnostic)
+```
+
+**Resolution flow:** presets → templates → env instances → ConfigResolver → tfvars.json → tofu
+
+## What You Can Do
+
+```bash
+# Configure Proxmox host
+homestak pve-setup
+
+# Deploy VMs (single or multi-VM environments)
+homestak scenario simple-vm-roundtrip --host pve
+homestak scenario simple-vm-constructor --host pve --env dev
+
+# Full E2E validation (~8.5 min)
+homestak scenario nested-pve-roundtrip --host pve
+
+# User management
+homestak playbook user -e local_user=me
+
+# Check installation
+homestak status
 ```
 
 ## Workflow
@@ -70,24 +84,14 @@ Fresh Debian/Proxmox Host                   Running VMs
        │  curl|bash                              │
        ▼                                         │
  ┌───────────┐    ┌───────────┐    ┌───────────┐
- │ bootstrap │───►│  ansible  │───►│   tofu    │
+ │ bootstrap │───▶│  ansible  │───▶│   tofu    │
  │  install  │    │ configure │    │ provision │
  └───────────┘    └───────────┘    └───────────┘
-                         │               │
-                         └───────┬───────┘
-                                 ▼
-                          site-config
-                        (YAML + secrets)
-```
-
-## What You Can Do
-
-```bash
-homestak pve-setup                    # Configure Proxmox host
-homestak scenario simple-vm-roundtrip # Provision → verify → destroy VM
-homestak secrets decrypt              # Decrypt site-config secrets
-homestak playbook user -e local_user=me
-homestak status                       # Check installation
+                                         │
+                        ┌────────────────┴────────────────┐
+                        │                                 │
+                   Single VM                         Multi-VM
+                  (test env)                    (dev, k8s envs)
 ```
 
 ## Repositories
@@ -95,21 +99,20 @@ homestak status                       # Check installation
 | Repo | Purpose |
 |------|---------|
 | [bootstrap](https://github.com/homestak-dev/bootstrap) | Entry point - installs `homestak` CLI and core repos |
-| [site-config](https://github.com/homestak-dev/site-config) | Central configuration: nodes, envs, secrets (SOPS + age) |
-| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestrate multi-step workflows and scenarios |
-| [ansible](https://github.com/homestak-dev/ansible) | Configure PVE hosts, install Proxmox on Debian |
-| [tofu](https://github.com/homestak-dev/tofu) | Provision VMs with OpenTofu + config-loader |
-| [packer](https://github.com/homestak-dev/packer) | Build custom Debian cloud images (optional) |
+| [site-config](https://github.com/homestak-dev/site-config) | 4NF YAML configuration with SOPS + age encryption |
+| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestration engine with ConfigResolver |
+| [ansible](https://github.com/homestak-dev/ansible) | Configure PVE hosts, install Proxmox on Debian 13 |
+| [tofu](https://github.com/homestak-dev/tofu) | Provision VMs with OpenTofu (dumb executor) |
+| [packer](https://github.com/homestak-dev/packer) | Build custom Debian cloud images (~16s boot) |
 
-## Releases
+## Key Features
 
-All repositories follow coordinated [semantic versioning](../docs/release-process.md).
-
-| Version | Status | Date |
-|---------|--------|------|
-| v0.5.0-rc1 | Pre-release | 2026-01-04 |
-
-See [Release Process](../docs/release-process.md) for details.
+- **ConfigResolver** - All config logic in Python, tofu receives flat tfvars
+- **VM Templates** - Define once, deploy anywhere with size presets
+- **Multi-VM Environments** - Deploy complex topologies in one command
+- **Node-Agnostic Deploys** - Same env template works on any PVE host
+- **E2E Validation** - Nested PVE testing validates full stack
+- **Community Roles** - Evaluating lae.proxmox for PVE installation
 
 ## License
 
