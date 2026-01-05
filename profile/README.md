@@ -2,6 +2,7 @@
 
 **Homelab infrastructure, automated.**
 
+![Release](https://img.shields.io/github/v/release/homestak-dev/bootstrap?include_prereleases&label=release)
 ![Ansible](https://img.shields.io/badge/Ansible-EE0000?logo=ansible&logoColor=white)
 ![OpenTofu](https://img.shields.io/badge/OpenTofu-813cf3?logo=opentofu&logoColor=white)
 ![Packer](https://img.shields.io/badge/Packer-02A8EF?logo=packer&logoColor=white)
@@ -14,27 +15,48 @@
 curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/install.sh | bash
 ```
 
-## How It Works
+## Architecture
 
 ```
                     ┌─────────────┐
                     │  bootstrap  │  ← curl|bash entry point
                     └──────┬──────┘
-                           │
+                           │ clones
     ┌──────────────────────┼──────────────────────┐
     │                      │                      │
     ▼                      ▼                      ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ site-config │    │ iac-driver  │    │   ansible   │
-│   secrets   │◄──►│ orchestrate │◄──►│  configure  │
-└─────────────┘    └──────┬──────┘    └─────────────┘
-                          │
-            ┌─────────────┼─────────────┐
-            ▼                           ▼
-     ┌──────────┐                ┌──────────┐
-     │   tofu   │                │  packer  │  (optional)
-     │ provision│                │   build  │
-     └──────────┘                └──────────┘
+┌─────────────┐    ┌─────────────┐        ┌─────────────┐
+│ site-config │    │ iac-driver  │        │   ansible   │
+│ ┌─────────┐ │    │ orchestrate │        │  configure  │
+│ │ nodes/  │ │    └──────┬──────┘        └─────────────┘
+│ │ envs/   │ │           │
+│ │secrets  │◄├───────────┼───────────────────────┐
+│ └─────────┘ │           │                       │
+└─────────────┘           │                       │
+       ▲          ┌───────┴───────┐               │
+       │          ▼               ▼               │
+       │   ┌──────────┐    ┌──────────┐           │
+       └───┤   tofu   │    │  packer  │ (optional)│
+           │ provision│    │   build  │           │
+           └──────────┘    └──────────┘           │
+                 │                                │
+                 └────────────────────────────────┘
+                        config-loader reads
+                        YAML configuration
+```
+
+## Configuration Model
+
+Site-specific settings live in `site-config/` using normalized YAML:
+
+```
+site-config/
+├── site.yaml        # Defaults (timezone, domain, datastore)
+├── secrets.yaml     # Encrypted with SOPS + age
+├── nodes/           # PVE instances (API endpoints, tokens)
+│   └── {node}.yaml
+└── envs/            # Deployment topologies
+    └── {env}.yaml
 ```
 
 ## Workflow
@@ -48,6 +70,11 @@ Fresh Debian/Proxmox Host                   Running VMs
  │ bootstrap │───►│  ansible  │───►│   tofu    │
  │  install  │    │ configure │    │ provision │
  └───────────┘    └───────────┘    └───────────┘
+                         │               │
+                         └───────┬───────┘
+                                 ▼
+                          site-config
+                        (YAML + secrets)
 ```
 
 ## What You Can Do
@@ -55,6 +82,7 @@ Fresh Debian/Proxmox Host                   Running VMs
 ```bash
 homestak pve-setup                    # Configure Proxmox host
 homestak scenario simple-vm-roundtrip # Provision → verify → destroy VM
+homestak secrets decrypt              # Decrypt site-config secrets
 homestak playbook user -e local_user=me
 homestak status                       # Check installation
 ```
@@ -64,10 +92,10 @@ homestak status                       # Check installation
 | Repo | Purpose |
 |------|---------|
 | [bootstrap](https://github.com/homestak-dev/bootstrap) | Entry point - installs `homestak` CLI and core repos |
-| [site-config](https://github.com/homestak-dev/site-config) | Site-specific secrets and configuration (SOPS + age) |
+| [site-config](https://github.com/homestak-dev/site-config) | Central configuration: nodes, envs, secrets (SOPS + age) |
+| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestrate multi-step workflows and scenarios |
 | [ansible](https://github.com/homestak-dev/ansible) | Configure PVE hosts, install Proxmox on Debian |
-| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestrate multi-step workflows |
-| [tofu](https://github.com/homestak-dev/tofu) | Provision VMs with OpenTofu |
+| [tofu](https://github.com/homestak-dev/tofu) | Provision VMs with OpenTofu + config-loader |
 | [packer](https://github.com/homestak-dev/packer) | Build custom Debian cloud images (optional) |
 
 ## License
