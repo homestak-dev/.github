@@ -38,6 +38,27 @@ This simplifies compatibility - if repos are at the same version, they work toge
 - **Stable**: After RC has been tested in production environments
 - **Hotfix**: Critical bug fixes (increment PATCH, skip RC)
 
+### Stable vs Pre-release
+
+GitHub Release flags determine "Latest" designation:
+
+| Release Type | Tag Example | GitHub Flag | "Latest" Badge |
+|--------------|-------------|-------------|----------------|
+| Pre-release | `v0.6.0-rc1` | ☑️ Pre-release | No |
+| Stable | `v0.6.0` | ☐ Pre-release | Yes (automatic) |
+
+**No floating tags** like `stable` or `latest` are used - version tags are immutable.
+GitHub automatically assigns the "Latest" badge to the most recent non-pre-release.
+
+**Example progression:**
+```
+v0.5.0-rc1  [Pre-release]
+v0.5.0-rc2  [Pre-release]
+v0.5.0      [Latest]        ← First stable, gets "Latest"
+v0.6.0-rc1  [Pre-release]   ← "Latest" stays on v0.5.0
+v0.6.0      [Latest]        ← Now v0.6.0 is "Latest"
+```
+
 ## E2E Validation Gate
 
 **REQUIRED**: The `nested-pve-roundtrip` scenario must pass before any release.
@@ -207,6 +228,13 @@ git push origin v0.6.0
 #### Manual (most repos)
 
 ```bash
+# Pre-release (RC)
+gh release create v0.6.0-rc1 \
+  --prerelease \
+  --title "v0.6.0-rc1" \
+  --notes "See CHANGELOG.md for details"
+
+# Stable (gets "Latest" badge automatically)
 gh release create v0.6.0 \
   --title "v0.6.0" \
   --notes "See CHANGELOG.md for details"
