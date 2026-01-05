@@ -101,6 +101,16 @@ homestak status                       # Check installation
 | [tofu](https://github.com/homestak-dev/tofu) | Provision VMs with OpenTofu + config-loader |
 | [packer](https://github.com/homestak-dev/packer) | Build custom Debian cloud images (optional) |
 
+## Releases
+
+All repositories follow coordinated [semantic versioning](../docs/release-process.md).
+
+| Version | Status | Date |
+|---------|--------|------|
+| v0.5.0-rc1 | Pre-release | 2026-01-04 |
+
+See [Release Process](../docs/release-process.md) for details.
+
 ## License
 
 Apache 2.0
