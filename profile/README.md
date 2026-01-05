@@ -28,9 +28,10 @@ curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/insta
 ┌─────────────┐    ┌─────────────┐        ┌─────────────┐
 │ site-config │    │ iac-driver  │        │   ansible   │
 │ ┌─────────┐ │    │ orchestrate │        │  configure  │
-│ │ nodes/  │ │    └──────┬──────┘        └─────────────┘
-│ │ envs/   │ │           │
-│ │secrets  │◄├───────────┼───────────────────────┐
+│ │ hosts/  │ │    └──────┬──────┘        └─────────────┘
+│ │ nodes/  │ │           │
+│ │ envs/   │◄├───────────┼───────────────────────┐
+│ │secrets  │ │           │                       │
 │ └─────────┘ │           │                       │
 └─────────────┘           │                       │
        ▲          ┌───────┴───────┐               │
@@ -47,13 +48,15 @@ curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/insta
 
 ## Configuration Model
 
-Site-specific settings live in `site-config/` using normalized YAML:
+Site-specific settings live in `site-config/` using normalized YAML (4NF):
 
 ```
 site-config/
 ├── site.yaml        # Defaults (timezone, domain, datastore)
 ├── secrets.yaml     # Encrypted with SOPS + age
-├── nodes/           # PVE instances (API endpoints, tokens)
+├── hosts/           # Physical machines (Ansible)
+│   └── {host}.yaml
+├── nodes/           # PVE instances (Tofu API access)
 │   └── {node}.yaml
 └── envs/            # Deployment topologies
     └── {env}.yaml
