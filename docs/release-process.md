@@ -389,4 +389,5 @@ jobs:
 
 | Version | Status | Date | Notes |
 |---------|--------|------|-------|
-| v0.5.0-rc1 | Pre-release | 2026-01-04 | First coordinated release |
+| v0.6.0-rc1 | Planned | TBD | Next release (this process) |
+| v0.5.0-rc1 | Released | 2026-01-04 | First coordinated release |
