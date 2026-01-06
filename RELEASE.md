@@ -177,6 +177,15 @@ Document on the release issue:
 
 **Important:** Create GitHub issues for any problems discovered during the release. Link them in the retrospective comment and consider them for the next release scope.
 
+#### Codify Lessons Learned
+
+After the retrospective, update this RELEASE.md with any process improvements:
+- New phases or steps discovered
+- Commands or patterns that should be documented
+- Gotchas to avoid in future releases
+
+Commit with message: `Update RELEASE.md with vX.Y.Z lessons learned`
+
 ## Version Numbering
 
 **Pre-release:** `v0.X.0-rcN` (current phase)
@@ -221,6 +230,7 @@ Planning for vX.Y.Z-rcN release.
 ### Post-Release
 - [ ] After Action Report
 - [ ] Retrospective
+- [ ] Update RELEASE.md with lessons learned
 
 ---
 **Status:** Planning | In Progress | Complete
