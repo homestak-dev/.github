@@ -82,6 +82,44 @@ Each component has its own `CLAUDE.md` with detailed context:
 - **Hostnames**: `{cluster}{instance}` (dev1, kubeadm1, router)
 - **Environments**: dev (permissive) vs prod (hardened)
 
+## Host Capabilities
+
+Not all hosts have the same capabilities. Key distinctions:
+
+| Host | QEMU/KVM | PVE API | Notes |
+|------|----------|---------|-------|
+| father | Yes | Yes | Primary build host for packer images |
+| mother | Yes | Yes | Secondary PVE host |
+| dev machines | Maybe | No | May lack nested virtualization |
+
+**Packer builds require QEMU/KVM.** Use `packer-build-fetch` scenario to build on capable hosts:
+```bash
+./run.sh --scenario packer-build-fetch --remote father
+```
+
+## Bootstrap Pattern
+
+The `bootstrap` repo provides capability installation via `homestak install <module>`:
+
+```bash
+# Initial setup (on any Debian host)
+curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/main/install.sh | bash
+
+# Add capabilities as needed
+homestak install packer    # QEMU, packer, templates
+homestak install tofu      # OpenTofu
+homestak install ansible   # Ansible + collections
+```
+
+This pattern enables any Debian host to become a build/deploy host without manual setup.
+
+## Release Process
+
+See [RELEASE.md](RELEASE.md) for the release methodology, including:
+- Repository dependency order
+- 8-phase release workflow
+- After action reports and retrospectives
+
 ## License
 
 Apache 2.0
