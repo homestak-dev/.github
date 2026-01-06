@@ -67,6 +67,7 @@ Each component has its own `CLAUDE.md` with detailed context:
 
 ## Design Principles
 
+- **Do it right** - Prefer proper solutions over quick workarounds. If a task is worth doing, invest in the reusable, maintainable approach rather than one-off hacks. Today's shortcut becomes tomorrow's technical debt.
 - **Repeatability over flexibility** - Prefer conventions that "just work" over infinite configurability
 - **Local-first execution** - Run on the host being configured to avoid SSH connection issues
 - **Idempotent operations** - Safe to run multiple times
