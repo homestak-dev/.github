@@ -17,6 +17,7 @@ Releases must follow this order (downstream depends on upstream):
 
 ### Phase 1: Pre-flight
 
+- [ ] Review RELEASE.md for methodology updates since last release
 - [ ] All PRs merged to main branches
 - [ ] Working trees clean (`git status` on all repos)
 - [ ] No existing tags for target version
