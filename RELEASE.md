@@ -71,7 +71,26 @@ git tag -a v0.X.0-rcN -m "Release v0.X.0-rcN"
 git push origin v0.X.0-rcN
 ```
 
-### Phase 4: Packer Images
+### Phase 4: E2E Validation
+
+Run integration tests before creating releases:
+
+```bash
+# Full nested-pve roundtrip (~8 min on father)
+./run.sh --scenario nested-pve-roundtrip --host father
+
+# Or constructor + destructor separately (requires --context-file when available)
+./run.sh --scenario nested-pve-constructor --host father
+# ... verify ...
+./run.sh --scenario nested-pve-destructor --host father
+```
+
+Document results on the release issue with:
+- Phase timings
+- Any failures or workarounds
+- Test VM IPs and cleanup status
+
+### Phase 5: Packer Images
 
 Build images on a host with QEMU/KVM support:
 
@@ -91,7 +110,21 @@ cd ~/homestak-dev/iac-driver
 
 **Dev workflow:** Use `packer-sync-build-fetch` to test local packer changes before committing.
 
-### Phase 5: GitHub Releases
+#### Image Versioning
+
+If packer source changes don't affect images (doc-only), copy forward from previous release:
+
+```bash
+# Download previous images
+gh release download v0.X.0-rcN --repo homestak-dev/packer --dir /tmp/packer-images
+
+# Upload to new release
+gh release upload v0.Y.0-rcN /tmp/packer-images/*.qcow2 --repo homestak-dev/packer
+```
+
+**Note:** iac-driver has `packer_release_tag` in `src/config.py`. Update when images change.
+
+### Phase 6: GitHub Releases
 
 Create releases in dependency order:
 
@@ -108,7 +141,7 @@ gh release create v0.X.0-rcN \
   /tmp/packer-images/debian-13-custom.qcow2
 ```
 
-### Phase 6: Verification
+### Phase 7: Verification
 
 ```bash
 for repo in site-config tofu ansible bootstrap packer iac-driver; do
@@ -119,7 +152,7 @@ done
 
 Expected: All repos have releases, packer has 2 assets.
 
-### Phase 7: After Action Report
+### Phase 8: After Action Report
 
 Document on the release issue:
 
@@ -130,7 +163,7 @@ Document on the release issue:
 | Issues Discovered | Problems found during release |
 | Artifacts Delivered | Final release inventory |
 
-### Phase 8: Retrospective
+### Phase 9: Retrospective
 
 Document on the release issue:
 
@@ -140,6 +173,9 @@ Document on the release issue:
 | What Could Improve | Process improvements |
 | Suggestions | Specific ideas for next release |
 | Open Questions | Decisions deferred |
+| Follow-up Issues | Create issues for discoveries |
+
+**Important:** Create GitHub issues for any problems discovered during the release. Link them in the retrospective comment and consider them for the next release scope.
 
 ## Version Numbering
 
@@ -203,5 +239,6 @@ Before graduating from pre-release to v1.0.0:
 
 ## References
 
-- [v0.6.0-rc1 Release](.github/issues/4) - First release using this methodology
-- [v0.7.0-rc1 Planning](.github/issues/6) - Next release
+- [v0.6.0-rc1 Release](https://github.com/homestak-dev/.github/issues/4) - First release using this methodology
+- [v0.7.0-rc1 Release](https://github.com/homestak-dev/.github/issues/6) - Gateway fix, state storage move, E2E validation
+- [v0.8.0-rc1 Planning](https://github.com/homestak-dev/.github/issues/11) - Next release
