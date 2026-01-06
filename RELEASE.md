@@ -20,8 +20,19 @@ Releases must follow this order (downstream depends on upstream):
 - [ ] All PRs merged to main branches
 - [ ] Working trees clean (`git status` on all repos)
 - [ ] No existing tags for target version
+- [ ] CLAUDE.md files reflect current state (see below)
 - [ ] CHANGELOGs current
 - [ ] Packer build smoke test on designated build host
+
+#### CLAUDE.md Review (per .github#5)
+
+Verify each repo's CLAUDE.md reflects current architecture:
+- [ ] site-config - schema, defaults, file structure
+- [ ] iac-driver - scenarios, actions, ConfigResolver
+- [ ] tofu - modules, variables, workflow
+- [ ] packer - templates, build workflow
+- [ ] ansible - playbooks, roles, collections
+- [ ] bootstrap - CLI, installation
 
 ```bash
 # Quick status check
@@ -162,6 +173,9 @@ Planning for vX.Y.Z-rcN release.
 - repo#N - Description
 
 ## Release Checklist
+### CLAUDE.md Review
+- [ ] All repos verified current
+
 ### CHANGELOGs
 - [ ] site-config ... iac-driver
 
