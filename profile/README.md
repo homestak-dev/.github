@@ -114,4 +114,4 @@ Each repo has its own README and `CLAUDE.md` with deeper context.
 
 ## License
 
-Apache 2.0 — use it, fork it, contribute back if you're so inclined.
+Apache 2.0
