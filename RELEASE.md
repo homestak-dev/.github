@@ -80,10 +80,13 @@ Run integration tests before creating releases:
 # Full nested-pve roundtrip (~8 min on father)
 ./run.sh --scenario nested-pve-roundtrip --host father
 
-# Or constructor + destructor separately (requires --context-file when available)
-./run.sh --scenario nested-pve-constructor --host father
-# ... verify ...
-./run.sh --scenario nested-pve-destructor --host father
+# Or constructor + destructor separately with context persistence
+./run.sh --scenario nested-pve-constructor --host father -C /tmp/e2e.ctx
+# ... verify inner PVE, check test VM ...
+./run.sh --scenario nested-pve-destructor --host father -C /tmp/e2e.ctx
+
+# Quick validation: simple-vm-roundtrip (~1 min)
+./run.sh --scenario simple-vm-roundtrip --host father
 ```
 
 Document results on the release issue with:
@@ -111,19 +114,37 @@ cd ~/homestak-dev/iac-driver
 
 **Dev workflow:** Use `packer-sync-build-fetch` to test local packer changes before committing.
 
-#### Image Versioning
+#### Image Versioning and `latest` Tag
 
-If packer source changes don't affect images (doc-only), copy forward from previous release:
+iac-driver defaults to downloading images from the `latest` release tag. This tag must be updated when images are rebuilt.
 
+**When releasing WITH new images:**
 ```bash
-# Download previous images
-gh release download v0.X.0-rcN --repo homestak-dev/packer --dir /tmp/packer-images
+# After creating the version release with assets (Phase 6)...
 
-# Upload to new release
-gh release upload v0.Y.0-rcN /tmp/packer-images/*.qcow2 --repo homestak-dev/packer
+# Update latest tag to point to new release
+cd ~/homestak-dev/packer
+git tag -f latest v0.X.0-rcN
+git push origin latest --force
+
+# Delete and recreate latest release with same assets
+gh release delete latest --repo homestak-dev/packer --yes
+gh release create latest \
+  --title "Latest Images" \
+  --notes "Rolling release - points to v0.X.0-rcN" \
+  --repo homestak-dev/packer \
+  /tmp/packer-images/debian-12-custom.qcow2 \
+  /tmp/packer-images/debian-13-custom.qcow2
 ```
 
-**Note:** iac-driver has `packer_release_tag` in `src/config.py`. Update when images change.
+**When releasing WITHOUT image changes (doc-only):**
+- Create version tag and release as normal
+- Do NOT update the `latest` tag
+- `latest` continues pointing to previous release with images
+
+See packer#5 for the `latest` tag convention details.
+
+**Override:** Pin to specific version with `--packer-release v0.X.0-rcN` or `site.yaml`.
 
 ### Phase 6: GitHub Releases
 
@@ -252,4 +273,4 @@ Before graduating from pre-release to v1.0.0:
 
 - [v0.6.0-rc1 Release](https://github.com/homestak-dev/.github/issues/4) - First release using this methodology
 - [v0.7.0-rc1 Release](https://github.com/homestak-dev/.github/issues/6) - Gateway fix, state storage move, E2E validation
-- [v0.8.0-rc1 Planning](https://github.com/homestak-dev/.github/issues/11) - Next release
+- [v0.8.0-rc1 Release](https://github.com/homestak-dev/.github/issues/11) - CLI robustness, `latest` packer release tag
