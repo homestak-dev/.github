@@ -24,6 +24,7 @@ Releases must follow this order (downstream depends on upstream):
 - [ ] Working trees clean (`git status` on all repos)
 - [ ] No existing tags for target version
 - [ ] CLAUDE.md files reflect current state (see below)
+- [ ] Organization README current (`.github/profile/README.md`)
 - [ ] CHANGELOGs current
 - [ ] Packer build smoke test on designated build host
 
@@ -297,6 +298,7 @@ Before graduating from pre-release to v1.0.0:
 - **Fetch before release work** - Run `git fetch` on all repos before starting release to avoid rebase surprises.
 - **Explicitly verify all image uploads** - debian-13-pve was omitted initially. Add image checklist to release process.
 - **GitHub 2GB release asset limit** - Large images (>2GB) must be split: `split -b 1900M image.qcow2 image.qcow2.part`, users reassemble with `cat image.qcow2.part* > image.qcow2`. Document in release notes.
+- **Review organization README** - `.github/profile/README.md` was updated retroactively to fix terminology. Added to pre-flight checklist.
 
 ### v0.8
 - **Complete AAR/retro immediately** - Deferred post-release tasks result in lost context. Block on these before starting next release work.
