@@ -19,13 +19,15 @@ Releases must follow this order (downstream depends on upstream):
 
 ### Phase 0: Release Plan Refresh
 
+**When:** Execute when transitioning from "Planning" to "In Progress" - not during initial planning.
+
 Before starting release work, ensure the release plan issue reflects current methodology:
 
 - [ ] Compare release plan against RELEASE.md template
 - [ ] Update Pre-flight, CLAUDE.md Review, CHANGELOGs, Tags & Releases, and Post-Release sections to match current RELEASE.md
 - [ ] Add any new checklist items from lessons learned
 
-This ensures each release benefits from accumulated process improvements.
+This ensures each release benefits from accumulated process improvements, especially if time has passed since the plan was created.
 
 ### Phase 1: Pre-flight
 
