@@ -74,6 +74,18 @@ Each component has its own `CLAUDE.md` with detailed context:
 - **Secrets in code, encrypted** - SOPS + age in site-config repo, git hooks for auto-encrypt/decrypt
 - **Component independence** - Each repo installs its own dependencies via `make install-deps`
 
+## Terminology
+
+Consistent terminology across all repos:
+
+| Use | Don't Use | Rationale |
+|-----|-----------|-----------|
+| integration test | E2E test, end-to-end test | Our tests validate component integration, not user journeys |
+| scenario | workflow, pipeline | Scenarios are iac-driver's unit of orchestration |
+| action | task, step | Actions are reusable primitives in iac-driver |
+| site-config | config, secrets | Specific repo name; "config" is ambiguous |
+| tofu | terraform | We use OpenTofu, not Terraform |
+
 ## Conventions
 
 - **VM IDs**: 5-digit (10000+ dev, 20000+ k8s, 99900+ integration test)

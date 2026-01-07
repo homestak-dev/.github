@@ -63,19 +63,36 @@ done
 
 ### Phase 2: CHANGELOGs
 
-Update CHANGELOGs in dependency order. Each should have:
+Update CHANGELOGs in dependency order.
+
+#### Development Workflow
+
+During development, add entries under an `## Unreleased` section:
 
 ```markdown
+## Unreleased
+
+### Features
+- Add foo capability (#123)
+
+### Bug Fixes
+- Fix bar issue (#124)
+```
+
+#### At Release Time
+
+Move Unreleased content to a new version header:
+
+```markdown
+## Unreleased
+
 ## vX.Y - YYYY-MM-DD
 
 ### Features
-- Item (closes #N)
+- Add foo capability (#123)
 
 ### Bug Fixes
-- Item
-
-### Changes
-- Item
+- Fix bar issue (#124)
 ```
 
 ### Phase 3: Tags
@@ -274,6 +291,17 @@ If you discover issues during release work:
 1. **Critical blocker** - Fix it, document in AAR
 2. **Important but not blocking** - Create issue, add to next release plan
 3. **Nice to have** - Create issue, add to backlog
+
+### Hotfix Process
+
+For critical bugs requiring immediate release:
+
+1. Create fix on main/master branch
+2. Increment patch version (v0.9 → v0.9.1) if needed
+3. Update CHANGELOG with hotfix entry
+4. Run abbreviated validation (simple-vm-roundtrip)
+5. Tag and release affected repo(s) only
+6. Hotfixes do NOT require full release train
 
 ## Version Numbering
 
