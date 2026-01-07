@@ -74,7 +74,7 @@ git tag -a v0.X -m "Release v0.X"
 git push origin v0.X
 ```
 
-### Phase 4: E2E Validation
+### Phase 4: Validation
 
 Run integration tests before creating releases:
 
@@ -83,18 +83,17 @@ Run integration tests before creating releases:
 ./run.sh --scenario nested-pve-roundtrip --host father
 
 # Or constructor + destructor separately with context persistence
-./run.sh --scenario nested-pve-constructor --host father -C /tmp/e2e.ctx
+./run.sh --scenario nested-pve-constructor --host father -C /tmp/nested-pve.ctx
 # ... verify inner PVE, check test VM ...
-./run.sh --scenario nested-pve-destructor --host father -C /tmp/e2e.ctx
+./run.sh --scenario nested-pve-destructor --host father -C /tmp/nested-pve.ctx
 
 # Quick validation: simple-vm-roundtrip (~1 min)
 ./run.sh --scenario simple-vm-roundtrip --host father
 ```
 
-Document results on the release issue with:
-- Phase timings
-- Any failures or workarounds
-- Test VM IPs and cleanup status
+**Attach report to release issue as proof.** Reports are generated in `iac-driver/reports/`:
+- `YYYYMMDD-HHMMSS.passed.md` - Human-readable summary
+- `YYYYMMDD-HHMMSS.passed.json` - Machine-readable details
 
 ### Phase 5: Packer Images
 
@@ -118,12 +117,23 @@ cd ~/homestak-dev/iac-driver
 
 #### Image Versioning and `latest` Tag
 
-iac-driver defaults to downloading images from the `latest` release tag. This tag must be updated when images are rebuilt.
+For unified versioning, **every release includes packer images** attached to the version release, and `latest` is updated to point to the new version. This ensures "homestak v0.X" is complete and self-contained.
 
-**When releasing WITH new images:**
+**If images were rebuilt this release:**
 ```bash
-# After creating the version release with assets (Phase 6)...
+# Build and fetch new images
+./run.sh --scenario packer-build-fetch --remote <build-host-ip>
+```
 
+**If images unchanged (reuse from previous release):**
+```bash
+# Fetch from current latest
+mkdir -p /tmp/packer-images && cd /tmp/packer-images
+gh release download latest --repo homestak-dev/packer --pattern '*.qcow2'
+```
+
+**Then update `latest` tag and release:**
+```bash
 # Update latest tag to point to new release
 cd ~/homestak-dev/packer
 git tag -f latest v0.X
@@ -131,18 +141,13 @@ git push origin latest --force
 
 # Delete and recreate latest release with same assets
 gh release delete latest --repo homestak-dev/packer --yes
-gh release create latest \
+gh release create latest --prerelease \
   --title "Latest Images" \
   --notes "Rolling release - points to v0.X" \
   --repo homestak-dev/packer \
   /tmp/packer-images/debian-12-custom.qcow2 \
   /tmp/packer-images/debian-13-custom.qcow2
 ```
-
-**When releasing WITHOUT image changes (doc-only):**
-- Create version tag and release as normal
-- Do NOT update the `latest` tag
-- `latest` continues pointing to previous release with images
 
 See packer#5 for the `latest` tag convention details.
 
