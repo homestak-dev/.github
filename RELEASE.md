@@ -13,6 +13,8 @@ Releases must follow this order (downstream depends on upstream):
 5. **packer** - Custom images (requires build host)
 6. **iac-driver** - Orchestration (depends on all above)
 
+**Unified versioning:** All repos get the same version tag on each release, even if unchanged. This simplifies tracking - "homestak v0.8" means all repos at v0.8.
+
 ## Release Phases
 
 ### Phase 1: Pre-flight
