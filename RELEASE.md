@@ -181,7 +181,9 @@ done
 
 Expected: All repos have releases, packer has 2 assets.
 
-### Phase 8: After Action Report
+### Phase 8: After Action Report (same day)
+
+**Complete immediately after release while details are fresh.** Delaying AAR/retro results in lost insights.
 
 Document on the release issue:
 
@@ -192,7 +194,7 @@ Document on the release issue:
 | Issues Discovered | Problems found during release |
 | Artifacts Delivered | Final release inventory |
 
-### Phase 9: Retrospective
+### Phase 9: Retrospective (same day)
 
 Document on the release issue:
 
@@ -258,10 +260,11 @@ Planning for vX.Y release.
 ### Tags & Releases
 - [ ] site-config ... iac-driver
 
-### Post-Release
+### Post-Release (same day - do not defer)
 - [ ] After Action Report
 - [ ] Retrospective
 - [ ] Update RELEASE.md with lessons learned
+- [ ] Close release issue
 
 ---
 **Status:** Planning | In Progress | Complete
@@ -283,3 +286,8 @@ Before graduating from pre-release to v1.0.0:
 - [v0.6 Release](https://github.com/homestak-dev/.github/issues/4) - First release using this methodology
 - [v0.7 Release](https://github.com/homestak-dev/.github/issues/6) - Gateway fix, state storage move, E2E validation
 - [v0.8 Release](https://github.com/homestak-dev/.github/issues/11) - CLI robustness, `latest` packer release tag
+
+## Lessons Learned
+
+### v0.8
+- **Complete AAR/retro immediately** - Deferred post-release tasks result in lost context. Block on these before starting next release work.
