@@ -286,8 +286,15 @@ Before graduating from pre-release to v1.0.0:
 - [v0.6 Release](https://github.com/homestak-dev/.github/issues/4) - First release using this methodology
 - [v0.7 Release](https://github.com/homestak-dev/.github/issues/6) - Gateway fix, state storage move, E2E validation
 - [v0.8 Release](https://github.com/homestak-dev/.github/issues/11) - CLI robustness, `latest` packer release tag
+- [v0.9 Release](https://github.com/homestak-dev/.github/issues/14) - Scenario annotations, --timeout, unit tests, CLAUDE.md audit
 
 ## Lessons Learned
+
+### v0.9
+- **Thorough CLAUDE.md verification pays off** - Found 6 documentation errors during release. Consider making this a standard release phase rather than optional.
+- **Generate scenario tables from code** - Manually maintaining phase counts leads to drift. Consider `--list-scenarios --json` for automation.
+- **Integration test is not optional** - Skipping nested-pve-roundtrip before release is risky. Make it a hard blocker.
+- **Fetch before release work** - Run `git fetch` on all repos before starting release to avoid rebase surprises.
 
 ### v0.8
 - **Complete AAR/retro immediately** - Deferred post-release tasks result in lost context. Block on these before starting next release work.
