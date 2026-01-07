@@ -366,8 +366,8 @@ Planning for vX.Y release.
 - [ ] Close release issue
 
 ---
-**Started:** YYYY-MM-DD
-**Completed:** YYYY-MM-DD
+**Started:** YYYY-MM-DD HH:MM
+**Completed:** YYYY-MM-DD HH:MM
 **Status:** Planning | In Progress | Complete
 ```
 
