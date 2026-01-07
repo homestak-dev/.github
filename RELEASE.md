@@ -50,7 +50,7 @@ done
 Update CHANGELOGs in dependency order. Each should have:
 
 ```markdown
-## vX.Y.Z-rcN - YYYY-MM-DD
+## vX.Y - YYYY-MM-DD
 
 ### Features
 - Item (closes #N)
@@ -68,8 +68,8 @@ Create and push tags in dependency order:
 
 ```bash
 # For each repo
-git tag -a v0.X.0-rcN -m "Release v0.X.0-rcN"
-git push origin v0.X.0-rcN
+git tag -a v0.X -m "Release v0.X"
+git push origin v0.X
 ```
 
 ### Phase 4: E2E Validation
@@ -124,14 +124,14 @@ iac-driver defaults to downloading images from the `latest` release tag. This ta
 
 # Update latest tag to point to new release
 cd ~/homestak-dev/packer
-git tag -f latest v0.X.0-rcN
+git tag -f latest v0.X
 git push origin latest --force
 
 # Delete and recreate latest release with same assets
 gh release delete latest --repo homestak-dev/packer --yes
 gh release create latest \
   --title "Latest Images" \
-  --notes "Rolling release - points to v0.X.0-rcN" \
+  --notes "Rolling release - points to v0.X" \
   --repo homestak-dev/packer \
   /tmp/packer-images/debian-12-custom.qcow2 \
   /tmp/packer-images/debian-13-custom.qcow2
@@ -144,19 +144,19 @@ gh release create latest \
 
 See packer#5 for the `latest` tag convention details.
 
-**Override:** Pin to specific version with `--packer-release v0.X.0-rcN` or `site.yaml`.
+**Override:** Pin to specific version with `--packer-release v0.X` or `site.yaml`.
 
 ### Phase 6: GitHub Releases
 
-Create releases in dependency order:
+Create releases in dependency order. **Use `--prerelease` flag until v1.0.**
 
 ```bash
 # Source-only repos
-gh release create v0.X.0-rcN --title "v0.X.0-rcN" --notes "See CHANGELOG.md" --repo homestak-dev/<repo>
+gh release create v0.X --prerelease --title "v0.X" --notes "See CHANGELOG.md" --repo homestak-dev/<repo>
 
 # Packer (with image assets)
-gh release create v0.X.0-rcN \
-  --title "v0.X.0-rcN" \
+gh release create v0.X --prerelease \
+  --title "v0.X" \
   --notes "See CHANGELOG.md" \
   --repo homestak-dev/packer \
   /tmp/packer-images/debian-12-custom.qcow2 \
@@ -168,7 +168,7 @@ gh release create v0.X.0-rcN \
 ```bash
 for repo in site-config tofu ansible bootstrap packer iac-driver; do
   echo "=== $repo ==="
-  gh release view v0.X.0-rcN --repo homestak-dev/$repo --json tagName,assets --jq '{tag: .tagName, assets: (.assets | length)}'
+  gh release view v0.X --repo homestak-dev/$repo --json tagName,assets --jq '{tag: .tagName, assets: (.assets | length)}'
 done
 ```
 
@@ -206,17 +206,19 @@ After the retrospective, update this RELEASE.md with any process improvements:
 - Commands or patterns that should be documented
 - Gotchas to avoid in future releases
 
-Commit with message: `Update RELEASE.md with vX.Y.Z lessons learned`
+Commit with message: `Update RELEASE.md with vX.Y lessons learned`
 
 ## Version Numbering
 
-**Pre-release:** `v0.X.0-rcN` (current phase)
+**Pre-release:** `v0.X` (current phase)
+- Simple major.minor versioning (e.g., v0.8, v0.9, v0.10)
+- No patch numbers or release candidates while pre-release
+- Add `-rc1`, `-rc2` or `.1`, `.2` only if actually needed
 - No backward compatibility guarantees
-- RC increments for post-tag additions (rc1 → rc2)
 - Delete/recreate tags acceptable for pre-releases
 
-**Stable:** `v1.0.0+` (future)
-- Semantic versioning
+**Stable:** `v1.0+` (future)
+- Semantic versioning with patch numbers
 - Backward compatibility expectations
 - No tag recreation
 
@@ -226,7 +228,7 @@ Each release should have a coordination issue in `.github` repo:
 
 ```markdown
 ## Summary
-Planning for vX.Y.Z-rcN release.
+Planning for vX.Y release.
 
 ## Scope
 ### repo-name
@@ -271,6 +273,6 @@ Before graduating from pre-release to v1.0.0:
 
 ## References
 
-- [v0.6.0-rc1 Release](https://github.com/homestak-dev/.github/issues/4) - First release using this methodology
-- [v0.7.0-rc1 Release](https://github.com/homestak-dev/.github/issues/6) - Gateway fix, state storage move, E2E validation
-- [v0.8.0-rc1 Release](https://github.com/homestak-dev/.github/issues/11) - CLI robustness, `latest` packer release tag
+- [v0.6 Release](https://github.com/homestak-dev/.github/issues/4) - First release using this methodology
+- [v0.7 Release](https://github.com/homestak-dev/.github/issues/6) - Gateway fix, state storage move, E2E validation
+- [v0.8 Release](https://github.com/homestak-dev/.github/issues/11) - CLI robustness, `latest` packer release tag
