@@ -17,9 +17,18 @@ Releases must follow this order (downstream depends on upstream):
 
 ## Release Phases
 
+### Phase 0: Release Plan Refresh
+
+Before starting release work, ensure the release plan issue reflects current methodology:
+
+- [ ] Compare release plan against RELEASE.md template
+- [ ] Update Pre-flight, CLAUDE.md Review, CHANGELOGs, Tags & Releases, and Post-Release sections to match current RELEASE.md
+- [ ] Add any new checklist items from lessons learned
+
+This ensures each release benefits from accumulated process improvements.
+
 ### Phase 1: Pre-flight
 
-- [ ] Review RELEASE.md for methodology updates since last release
 - [ ] All PRs merged to main branches
 - [ ] Working trees clean (`git status` on all repos)
 - [ ] No existing tags for target version
@@ -252,14 +261,43 @@ Planning for vX.Y release.
 - repo#N - Description
 
 ## Release Checklist
+
+### Phase 0: Release Plan Refresh
+- [ ] Compare release plan against RELEASE.md template
+- [ ] Update checklists to match current methodology
+
+### Pre-flight
+- [ ] All PRs merged to master
+- [ ] Working trees clean (`git status` on all repos)
+- [ ] No existing tags for target version
+- [ ] CLAUDE.md files reflect current state (see below)
+- [ ] Organization README current (`.github/profile/README.md`)
+- [ ] CHANGELOGs current
+- [ ] Packer build smoke test (if images changed)
+
 ### CLAUDE.md Review
-- [ ] All repos verified current
+- [ ] site-config - schema, defaults, file structure
+- [ ] iac-driver - scenarios, actions, ConfigResolver
+- [ ] tofu - modules, variables, workflow
+- [ ] packer - templates, build workflow
+- [ ] ansible - playbooks, roles, collections
+- [ ] bootstrap - CLI, installation
 
 ### CHANGELOGs
-- [ ] site-config ... iac-driver
+- [ ] site-config
+- [ ] tofu
+- [ ] ansible
+- [ ] bootstrap
+- [ ] packer
+- [ ] iac-driver
 
 ### Tags & Releases
-- [ ] site-config ... iac-driver
+- [ ] site-config vX.Y
+- [ ] tofu vX.Y
+- [ ] ansible vX.Y
+- [ ] bootstrap vX.Y
+- [ ] packer vX.Y
+- [ ] iac-driver vX.Y
 
 ### Post-Release (same day - do not defer)
 - [ ] After Action Report
