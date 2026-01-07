@@ -21,8 +21,9 @@ Releases must follow this order (downstream depends on upstream):
 
 **When:** Execute when transitioning from "Planning" to "In Progress" - not during initial planning.
 
-Before starting release work, ensure the release plan issue reflects current methodology:
+Before starting release work, ensure prerequisites are met and the plan is current:
 
+- [ ] Verify prerequisite releases are complete (tags exist, issues closed)
 - [ ] Compare release plan against RELEASE.md template
 - [ ] Update Pre-flight, CLAUDE.md Review, CHANGELOGs, Tags & Releases, and Post-Release sections to match current RELEASE.md
 - [ ] Add any new checklist items from lessons learned
@@ -31,6 +32,7 @@ This ensures each release benefits from accumulated process improvements, especi
 
 ### Phase 1: Pre-flight
 
+- [ ] Git fetch on all repos (avoid rebase surprises)
 - [ ] All PRs merged to main branches
 - [ ] Working trees clean (`git status` on all repos)
 - [ ] No existing tags for target version
@@ -182,6 +184,16 @@ gh release create v0.X --prerelease \
   /tmp/packer-images/debian-13-custom.qcow2
 ```
 
+#### Packer Image Checklist
+
+Verify all images are uploaded to the packer release:
+
+- [ ] debian-12-custom.qcow2
+- [ ] debian-13-custom.qcow2
+- [ ] debian-13-pve.qcow2 (or split parts if >2GB)
+
+**Note:** Images >2GB must be split due to GitHub limits. See Lessons Learned.
+
 ### Phase 7: Verification
 
 ```bash
@@ -191,7 +203,21 @@ for repo in site-config tofu ansible bootstrap packer iac-driver; do
 done
 ```
 
-Expected: All repos have releases, packer has 2 assets.
+Expected: All repos have releases, packer has 3+ assets.
+
+#### Post-Release Smoke Test
+
+Verify the released artifacts work from a fresh perspective:
+
+```bash
+# Test bootstrap installation (on a clean system or container)
+curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/v0.X/install.sh | bash
+
+# Verify version
+homestak --version  # Should show v0.X
+```
+
+This catches packaging issues before users encounter them.
 
 ### Phase 8: After Action Report (same day)
 
@@ -229,6 +255,26 @@ After the retrospective, update this RELEASE.md with any process improvements:
 
 Commit with message: `Update RELEASE.md with vX.Y lessons learned`
 
+## Scope Management
+
+### Scope Freeze
+
+Once a release transitions from "Planning" to "In Progress":
+
+- **No new features** - New scope goes to the next release
+- **Bug fixes only** - Critical issues discovered during release may be addressed
+- **Document deferrals** - Add deferred items to "Deferred to Future Release" section
+
+This prevents scope creep and keeps releases focused and predictable.
+
+### Mid-Release Discoveries
+
+If you discover issues during release work:
+
+1. **Critical blocker** - Fix it, document in AAR
+2. **Important but not blocking** - Create issue, add to next release plan
+3. **Nice to have** - Create issue, add to backlog
+
 ## Version Numbering
 
 **Pre-release:** `v0.X` (current phase)
@@ -265,10 +311,12 @@ Planning for vX.Y release.
 ## Release Checklist
 
 ### Phase 0: Release Plan Refresh
+- [ ] Verify prerequisite releases are complete (tags exist, issues closed)
 - [ ] Compare release plan against RELEASE.md template
 - [ ] Update checklists to match current methodology
 
 ### Pre-flight
+- [ ] Git fetch on all repos (avoid rebase surprises)
 - [ ] All PRs merged to master
 - [ ] Working trees clean (`git status` on all repos)
 - [ ] No existing tags for target version
@@ -301,6 +349,16 @@ Planning for vX.Y release.
 - [ ] packer vX.Y
 - [ ] iac-driver vX.Y
 
+### Packer Images
+- [ ] debian-12-custom.qcow2
+- [ ] debian-13-custom.qcow2
+- [ ] debian-13-pve.qcow2 (or split parts)
+
+### Verification
+- [ ] All repos have releases
+- [ ] Packer has 3+ image assets
+- [ ] Post-release smoke test (bootstrap install)
+
 ### Post-Release (same day - do not defer)
 - [ ] After Action Report
 - [ ] Retrospective
@@ -308,6 +366,8 @@ Planning for vX.Y release.
 - [ ] Close release issue
 
 ---
+**Started:** YYYY-MM-DD
+**Completed:** YYYY-MM-DD
 **Status:** Planning | In Progress | Complete
 ```
 
