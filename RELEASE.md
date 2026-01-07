@@ -295,6 +295,8 @@ Before graduating from pre-release to v1.0.0:
 - **Generate scenario tables from code** - Manually maintaining phase counts leads to drift. Consider `--list-scenarios --json` for automation.
 - **Integration test is not optional** - Skipping nested-pve-roundtrip before release is risky. Make it a hard blocker.
 - **Fetch before release work** - Run `git fetch` on all repos before starting release to avoid rebase surprises.
+- **Explicitly verify all image uploads** - debian-13-pve was omitted initially. Add image checklist to release process.
+- **GitHub 2GB release asset limit** - Large images (>2GB) must be split: `split -b 1900M image.qcow2 image.qcow2.part`, users reassemble with `cat image.qcow2.part* > image.qcow2`. Document in release notes.
 
 ### v0.8
 - **Complete AAR/retro immediately** - Deferred post-release tasks result in lost context. Block on these before starting next release work.
