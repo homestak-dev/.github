@@ -94,7 +94,7 @@ The `homestak` CLI wraps the underlying tools so you don't have to remember the 
 | [bootstrap](https://github.com/homestak-dev/bootstrap) | Entry point — installs the CLI and clones core repos |
 | [site-config](https://github.com/homestak-dev/site-config) | Your secrets and site-specific config (SOPS + age encrypted) |
 | [ansible](https://github.com/homestak-dev/ansible) | Playbooks for PVE host configuration |
-| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestrates multi-step workflows and E2E tests |
+| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestrates multi-step workflows and integration tests |
 | [tofu](https://github.com/homestak-dev/tofu) | OpenTofu modules for VM provisioning |
 | [packer](https://github.com/homestak-dev/packer) | Build custom Debian cloud images (optional) |
 
@@ -108,7 +108,7 @@ Each repo has its own README and `CLAUDE.md` with deeper context.
 
 **Debian-rooted, Proxmox-current.** The platform is built on Debian, with Proxmox as the virtualization layer. The architecture leaves room for bare QEMU/KVM on Debian if you ever need it.
 
-**Testable infrastructure.** The E2E scenarios in iac-driver actually spin up nested Proxmox environments to validate the full stack. This isn't a collection of scripts — it's tested automation.
+**Testable infrastructure.** The integration scenarios in iac-driver actually spin up nested Proxmox environments to validate the full stack. This isn't a collection of scripts — it's tested automation.
 
 ---
 

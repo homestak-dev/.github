@@ -244,7 +244,7 @@ Planning for vX.Y release.
 - [ ] Feature/fix description (#issue)
 
 ## Validation
-- [ ] E2E test results
+- [ ] Integration test results
 - [ ] Manual verification
 
 ## Deferred to Future Release
@@ -275,7 +275,7 @@ Planning for vX.Y release.
 Before graduating from pre-release to v1.0.0:
 
 - [ ] User-facing documentation (beyond CLAUDE.md)
-- [ ] CI/CD pipeline for automated E2E tests
+- [ ] CI/CD pipeline for automated integration tests
 - [ ] All "known issues" resolved or documented
 - [ ] Core workflows fully working
 - [ ] Security audit (secrets, SSH, API tokens)

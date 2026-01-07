@@ -53,7 +53,7 @@ Each component has its own `CLAUDE.md` with detailed context:
 |-----------|-------|
 | `bootstrap/CLAUDE.md` | Installation, homestak CLI, dependency management |
 | `site-config/CLAUDE.md` | Secrets encryption, SOPS/age, host credentials |
-| `iac-driver/CLAUDE.md` | Scenarios, actions, E2E testing |
+| `iac-driver/CLAUDE.md` | Scenarios, actions, integration testing |
 | `ansible/CLAUDE.md` | Playbooks, roles, inventory, execution models |
 | `tofu/CLAUDE.md` | Modules, environments, configuration inheritance |
 | `packer/CLAUDE.md` | Templates, build workflow, image optimization |
@@ -63,7 +63,7 @@ Each component has its own `CLAUDE.md` with detailed context:
 1. **Integrated workflow** - Unified tooling across packer→tofu→ansible with orchestration
 2. **Proxmox-optimized** - Purpose-built for Proxmox VE homelabs (with Debian escape hatch)
 3. **Opinionated defaults** - Sensible choices for homelab (SDN, cloud-init, security profiles)
-4. **Testable infrastructure** - E2E nested PVE testing validates the full stack
+4. **Testable infrastructure** - Nested PVE integration testing validates the full stack
 
 ## Design Principles
 
@@ -76,7 +76,7 @@ Each component has its own `CLAUDE.md` with detailed context:
 
 ## Conventions
 
-- **VM IDs**: 5-digit (10000+ dev, 20000+ k8s, 99900+ E2E test)
+- **VM IDs**: 5-digit (10000+ dev, 20000+ k8s, 99900+ integration test)
 - **MAC prefix**: BC:24:11:*
 - **Networks**: dev 10.10.10.0/24, k8s 10.10.20.0/24, management 10.0.12.0/24
 - **Hostnames**: `{cluster}{instance}` (dev1, kubeadm1, router)
