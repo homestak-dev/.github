@@ -448,6 +448,7 @@ Before graduating from pre-release to v1.0.0:
 - [v0.8 Release](https://github.com/homestak-dev/.github/issues/11) - CLI robustness, `latest` packer release tag
 - [v0.9 Release](https://github.com/homestak-dev/.github/issues/14) - Scenario annotations, --timeout, unit tests, CLAUDE.md audit
 - [v0.10 Release](https://github.com/homestak-dev/.github/issues/18) - Housekeeping, CI/CD Phase 1, repository settings harmonization
+- [v0.11 Release](https://github.com/homestak-dev/.github/issues/21) - Code quality, static analysis, test coverage, security audit
 
 ## Recipes
 
@@ -474,6 +475,15 @@ git push origin :refs/tags/v0.5.0-rc1
 Assets remain attached to the release through the tag change.
 
 ## Lessons Learned
+
+### v0.11
+- **Checkpoint before release execution** - After integration tests pass, explicitly pause to review RELEASE.md and the release issue checkboxes before creating tags/releases. The validation phase is part of the sprint, not the release execution. Without this checkpoint, steps get skipped in the rush to complete.
+- **Update checkboxes as you go** - Check off items in the release issue as work progresses, not post-hoc. This provides real-time visibility and prevents skipped steps.
+- **Distinguish "sprint" from "release"** - A sprint includes code changes, PRs, and validation. The release is the separate act of tagging and publishing. Conflating them leads to skipped release steps.
+- **Check for existing tags** - Before creating tags, verify they don't already exist across all repos. Created .github#26 for automation.
+- **Use `--prerelease` flag** - Until v1.0, all releases should use `--prerelease` per the methodology.
+- **Context loss requires re-reading** - When AI context is exhausted mid-release, re-read RELEASE.md before continuing. The summarized context may lose procedural details.
+- **Branch protection friction** - PRs required `--admin` flag due to branch protection. Created .github#27 to evaluate options.
 
 ### v0.10
 - **Scenario name consistency matters** - `simple-vm-roundtrip` was incorrect in multiple places (RELEASE.md, issue #15, profile README). Fixed during release.
