@@ -248,6 +248,9 @@ Document on the release issue:
 | Deviations | What changed and why |
 | Issues Discovered | Problems found during release |
 | Artifacts Delivered | Final release inventory |
+| Validation Report | Attach integration test report (markdown) |
+
+**Attach the integration test report** from `iac-driver/reports/YYYYMMDD-HHMMSS.passed.md` as a code block in the AAR comment. This provides permanent proof of validation.
 
 ### Phase 9: Retrospective (same day)
 
@@ -319,7 +322,9 @@ For critical bugs requiring immediate release:
 
 ## Release Issue Template
 
-Each release should have a coordination issue in `.github` repo:
+Each release should have a coordination issue in `.github` repo.
+
+**Checkbox maintenance:** Check off items as phases complete to track progress visually. This provides a clear record of completion and helps identify any missed steps.
 
 ```markdown
 ## Summary
