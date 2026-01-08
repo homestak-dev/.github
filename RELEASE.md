@@ -275,6 +275,25 @@ After the retrospective, update this RELEASE.md with any process improvements:
 
 Commit with message: `Update RELEASE.md with vX.Y lessons learned`
 
+### Phase 10: Housekeeping (periodic)
+
+Clean up local development environment:
+
+```bash
+# Delete merged local branches (run in each repo)
+git branch --merged | grep -v master | xargs git branch -d
+
+# Prune stale remote tracking refs
+git remote prune origin
+
+# Quick status check across all repos
+for repo in site-config tofu ansible bootstrap packer iac-driver .github; do
+  echo "=== $repo ===" && cd ~/homestak-dev/$repo && git status --short && git branch
+done
+```
+
+This prevents accumulation of stale branches from merged PRs.
+
 ## Scope Management
 
 ### Scope Freeze
@@ -429,6 +448,30 @@ Before graduating from pre-release to v1.0.0:
 - [v0.8 Release](https://github.com/homestak-dev/.github/issues/11) - CLI robustness, `latest` packer release tag
 - [v0.9 Release](https://github.com/homestak-dev/.github/issues/14) - Scenario annotations, --timeout, unit tests, CLAUDE.md audit
 - [v0.10 Release](https://github.com/homestak-dev/.github/issues/18) - Housekeeping, CI/CD Phase 1, repository settings harmonization
+
+## Recipes
+
+### Renaming a Release
+
+To rename a release (e.g., `v0.5.0-rc1` → `v0.5`) without re-uploading assets:
+
+```bash
+# 1. Get the commit SHA for the old tag
+git show-ref --tags | grep v0.5.0-rc1
+
+# 2. Create new tag pointing to same commit
+git tag v0.5 <commit-sha>
+git push origin v0.5
+
+# 3. Edit release to use new tag
+gh release edit v0.5.0-rc1 --repo homestak-dev/<repo> --tag v0.5 --title "v0.5"
+
+# 4. Delete old tag
+git tag -d v0.5.0-rc1
+git push origin :refs/tags/v0.5.0-rc1
+```
+
+Assets remain attached to the release through the tag change.
 
 ## Lessons Learned
 
