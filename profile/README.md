@@ -78,7 +78,7 @@ Start with a fresh Debian or Proxmox host. Bootstrap installs dependencies and t
 
 ```bash
 homestak pve-setup                    # Configure a Proxmox host
-homestak scenario simple-vm-roundtrip # Provision → verify → destroy a VM
+homestak scenario vm-roundtrip        # Provision → verify → destroy a VM
 homestak playbook user -e local_user=me
 homestak status                       # Check your installation
 ```
