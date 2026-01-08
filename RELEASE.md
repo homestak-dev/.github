@@ -324,6 +324,13 @@ For critical bugs requiring immediate release:
 
 Each release should have a coordination issue in `.github` repo.
 
+**Issue naming convention:** Use format `vX.Y Release Planning - Theme`
+
+Examples:
+- `v0.10 Release Planning - Housekeeping`
+- `v0.11 Release Planning - Code Quality`
+- `v0.20 Release Planning - Recursive Nested PVE`
+
 **Checkbox maintenance:** Check off items as phases complete to track progress visually. This provides a clear record of completion and helps identify any missed steps.
 
 ```markdown
