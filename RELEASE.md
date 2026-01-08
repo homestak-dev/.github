@@ -416,8 +416,16 @@ Before graduating from pre-release to v1.0.0:
 - [v0.7 Release](https://github.com/homestak-dev/.github/issues/6) - Gateway fix, state storage move, E2E validation
 - [v0.8 Release](https://github.com/homestak-dev/.github/issues/11) - CLI robustness, `latest` packer release tag
 - [v0.9 Release](https://github.com/homestak-dev/.github/issues/14) - Scenario annotations, --timeout, unit tests, CLAUDE.md audit
+- [v0.10 Release](https://github.com/homestak-dev/.github/issues/18) - Housekeeping, CI/CD Phase 1, repository settings harmonization
 
 ## Lessons Learned
+
+### v0.10
+- **Scenario name consistency matters** - `simple-vm-roundtrip` was incorrect in multiple places (RELEASE.md, issue #15, profile README). Fixed during release.
+- **Document destructive actions** - vm-destructor has no confirmation prompt. Added caution to examples, created iac-driver#65.
+- **Packer image reuse workflow** - When reusing images, must download from `latest` then re-upload to new release. Consider streamlining.
+- **Post-scope polish is scope creep** - Added third-party acknowledgments and improved examples during "completed" release. Consider scope freeze earlier.
+- **Release plan naming convention** - Inconsistent naming discovered (.github#25). Standardize on `vX.Y Release Planning - Theme`.
 
 ### v0.9
 - **Thorough CLAUDE.md verification pays off** - Found 6 documentation errors during release. Consider making this a standard release phase rather than optional.
