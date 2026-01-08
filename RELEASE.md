@@ -118,8 +118,8 @@ Run integration tests before creating releases:
 # ... verify inner PVE, check test VM ...
 ./run.sh --scenario nested-pve-destructor --host father -C /tmp/nested-pve.ctx
 
-# Quick validation: simple-vm-roundtrip (~1 min)
-./run.sh --scenario simple-vm-roundtrip --host father
+# Quick validation: vm-roundtrip (~2 min)
+./run.sh --scenario vm-roundtrip --host father
 ```
 
 **Attach report to release issue as proof.** Reports are generated in `iac-driver/reports/`:
