@@ -26,7 +26,7 @@ That's what homestak is for.
 curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/install.sh | bash
 ```
 
-This installs the `homestak` CLI and clones the core repos. From there, you can configure your Proxmox host, provision VMs, and run end-to-end scenarios.
+This installs the `homestak` CLI and clones the core repos. From there, you can configure your Proxmox host, provision VMs, and run integration scenarios.
 
 ---
 
@@ -109,6 +109,20 @@ Each repo has its own README and `CLAUDE.md` with deeper context.
 **Debian-rooted, Proxmox-current.** The platform is built on Debian, with Proxmox as the virtualization layer. The architecture leaves room for bare QEMU/KVM on Debian if you ever need it.
 
 **Testable infrastructure.** The integration scenarios in iac-driver actually spin up nested Proxmox environments to validate the full stack. This isn't a collection of scripts — it's tested automation.
+
+---
+
+## Third-Party Acknowledgments
+
+homestak builds on excellent open-source projects:
+
+| Component | Third-Party | Purpose |
+|-----------|-------------|---------|
+| ansible | [lae.proxmox](https://github.com/lae/ansible-role-proxmox) | Proxmox VE installation on Debian |
+| tofu | [bpg/proxmox](https://github.com/bpg/terraform-provider-proxmox) | OpenTofu provider for Proxmox API |
+| packer | [hashicorp/qemu](https://github.com/hashicorp/packer-plugin-qemu) | QEMU builder plugin |
+
+See individual repo READMEs for complete dependency lists.
 
 ---
 
