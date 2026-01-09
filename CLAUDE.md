@@ -1,137 +1,76 @@
-# homestak-dev
+# .github
 
-This file provides guidance to Claude Code when working with this repository.
+GitHub organization configuration for homestak-dev.
 
-## Vision
+For project vision, architecture, and development guidance, see [homestak-dev/CLAUDE.md](https://github.com/homestak-dev/homestak-dev/blob/master/CLAUDE.md).
 
-**homestak** makes setting up and running a homelab repeatable and manageable. The infrastructure-as-code in this repository is a means to an end: creating a platform for "best in class" self-hosted applications like Home Assistant, Jellyfin, Vaultwarden, and other highly desirable home apps.
+## Contents
 
-### Open Source + Commercial Model
+| File | Purpose |
+|------|---------|
+| `profile/README.md` | Organization profile shown on github.com/homestak-dev |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Default PR template for all repos |
 
-| Organization | Purpose |
-|--------------|---------|
-| **homestak-dev** | Open-source IaC components (this repo) |
-| **homestak-com** | Commercial offering: verified releases, remote monitoring/management, cloud backup, high availability, community and live support |
+## CI/CD Patterns
 
-The open-source foundation enables the commercial layer, not the other way around.
+### Workflow Triggers
 
-## Technical Foundation
+All repos follow consistent CI patterns:
 
-### Debian-Rooted, Proxmox-Current
+| Trigger | Action |
+|---------|--------|
+| Push to master | Run lint/validation |
+| Pull request | Run lint/validation, block merge on failure |
+| Release tag | (Future) Build and publish artifacts |
 
-The platform is rooted in **Debian**, with **Proxmox VE** as the current virtualization solution. Proxmox is at the heart of current workflows, but the architecture should leave the door open for:
+### Current Workflows
 
-- QEMU/KVM without Proxmox (bare Debian hosts)
-- Alternative virtualization platforms built on Debian
+| Repo | Workflow | Purpose |
+|------|----------|---------|
+| ansible | ansible-lint | Lint playbooks and roles |
+| iac-driver | pylint, pytest | Lint and test Python code |
+| packer | packer validate | Validate HCL templates |
+| tofu | tofu validate | Validate OpenTofu modules |
 
-Design decisions should favor Debian primitives over Proxmox-specific features when practical.
+### Runner Configuration
 
-### Full Homelab Stack (Roadmap)
+- **GitHub-hosted**: `ubuntu-latest` for all lint/validation workflows
+- **Self-hosted**: (Future) Required for KVM access (packer builds, integration tests)
 
-Current focus is VM provisioning and PVE host configuration. Future scope includes:
+## Branch Protection
 
-- Kubernetes (k3s, kubeadm)
-- Storage (ZFS, Ceph)
-- Advanced networking (VLANs, SDN, firewalls)
-- Application deployment (the actual goal)
+All repos enforce branch protection on master:
 
-## Repository Structure
+| Setting | Value |
+|---------|-------|
+| Require PR | Yes |
+| Required checks | Repo-specific lint workflow |
+| Admin bypass | Available (use sparingly) |
 
-```
-homestak-dev/
-├── bootstrap/      # Entry point - curl|bash installer, homestak CLI
-├── site-config/    # Site-specific secrets and configuration
-├── iac-driver/     # Orchestration engine - scenario-based workflows
-├── ansible/        # Playbooks for host configuration
-├── tofu/           # OpenTofu modules for VM provisioning
-└── packer/         # Custom Debian cloud images (optional)
-```
+See [REPO-SETTINGS.md](https://github.com/homestak-dev/homestak-dev/blob/master/REPO-SETTINGS.md) in homestak-dev for full standards.
 
-Each component has its own `CLAUDE.md` with detailed context:
+## Dependabot
 
-| Component | Focus |
-|-----------|-------|
-| `bootstrap/CLAUDE.md` | Installation, homestak CLI, dependency management |
-| `site-config/CLAUDE.md` | Secrets encryption, SOPS/age, host credentials |
-| `iac-driver/CLAUDE.md` | Scenarios, actions, integration testing |
-| `ansible/CLAUDE.md` | Playbooks, roles, inventory, execution models |
-| `tofu/CLAUDE.md` | Modules, environments, configuration inheritance |
-| `packer/CLAUDE.md` | Templates, build workflow, image optimization |
+Enabled on all repos for:
+- GitHub Actions version updates
+- Language-specific dependency updates (pip, npm where applicable)
 
-## Value Propositions
+Update schedule: Weekly
 
-1. **Integrated workflow** - Unified tooling across packer→tofu→ansible with orchestration
-2. **Proxmox-optimized** - Purpose-built for Proxmox VE homelabs (with Debian escape hatch)
-3. **Opinionated defaults** - Sensible choices for homelab (SDN, cloud-init, security profiles)
-4. **Testable infrastructure** - Nested PVE integration testing validates the full stack
+## Secret Scanning
 
-## Design Principles
+- Push protection: Enabled
+- Alert notifications: Enabled
 
-- **Do it right** - Prefer proper solutions over quick workarounds. If a task is worth doing, invest in the reusable, maintainable approach rather than one-off hacks. Today's shortcut becomes tomorrow's technical debt.
-- **Repeatability over flexibility** - Prefer conventions that "just work" over infinite configurability
-- **Local-first execution** - Run on the host being configured to avoid SSH connection issues
-- **Idempotent operations** - Safe to run multiple times
-- **Secrets in code, encrypted** - SOPS + age in site-config repo, git hooks for auto-encrypt/decrypt
-- **Component independence** - Each repo installs its own dependencies via `make install-deps`
+## Adding a New Workflow
 
-## Terminology
+1. Create `.github/workflows/<name>.yml` in the target repo
+2. Follow existing patterns (trigger on push/PR to master)
+3. Use `ubuntu-latest` runner unless KVM required
+4. Add required check to branch protection after first successful run
 
-Consistent terminology across all repos:
+## Related Issues
 
-| Use | Don't Use | Rationale |
-|-----|-----------|-----------|
-| integration test | E2E test, end-to-end test | Our tests validate component integration, not user journeys |
-| scenario | workflow, pipeline | Scenarios are iac-driver's unit of orchestration |
-| action | task, step | Actions are reusable primitives in iac-driver |
-| site-config | config, secrets | Specific repo name; "config" is ambiguous |
-| tofu | terraform | We use OpenTofu, not Terraform |
-
-## Conventions
-
-- **VM IDs**: 5-digit (10000+ dev, 20000+ k8s, 99900+ integration test)
-- **MAC prefix**: BC:24:11:*
-- **Networks**: dev 10.10.10.0/24, k8s 10.10.20.0/24, management 10.0.12.0/24
-- **Hostnames**: `{cluster}{instance}` (dev1, kubeadm1, router)
-- **Environments**: dev (permissive) vs prod (hardened)
-
-## Host Capabilities
-
-Not all hosts have the same capabilities. Key distinctions:
-
-| Host | QEMU/KVM | PVE API | Notes |
-|------|----------|---------|-------|
-| father | Yes | Yes | Primary build host for packer images |
-| mother | Yes | Yes | Secondary PVE host |
-| dev machines | Maybe | No | May lack nested virtualization |
-
-**Packer builds require QEMU/KVM.** Use `packer-build-fetch` scenario to build on capable hosts:
-```bash
-./run.sh --scenario packer-build-fetch --remote father
-```
-
-## Bootstrap Pattern
-
-The `bootstrap` repo provides capability installation via `homestak install <module>`:
-
-```bash
-# Initial setup (on any Debian host)
-curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/main/install.sh | bash
-
-# Add capabilities as needed
-homestak install packer    # QEMU, packer, templates
-homestak install tofu      # OpenTofu
-homestak install ansible   # Ansible + collections
-```
-
-This pattern enables any Debian host to become a build/deploy host without manual setup.
-
-## Release Process
-
-See [RELEASE.md](RELEASE.md) for the release methodology, including:
-- Repository dependency order
-- 8-phase release workflow
-- After action reports and retrospectives
-
-## License
-
-Apache 2.0
+- homestak-dev#13 - CI/CD strategy epic
+- .github#26 - Tag validation automation
+- .github#27 - Branch protection bypass policy
