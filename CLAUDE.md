@@ -47,7 +47,7 @@ All repos enforce branch protection on master:
 | Required checks | Repo-specific lint workflow |
 | Admin bypass | Available (use sparingly) |
 
-See [REPO-SETTINGS.md](https://github.com/homestak-dev/homestak-dev/blob/master/REPO-SETTINGS.md) in homestak-dev for full standards.
+See [REPO-SETTINGS.md](https://github.com/homestak-dev/homestak-dev/blob/master/docs/REPO-SETTINGS.md) in homestak-dev for full standards.
 
 ## Dependabot
 
