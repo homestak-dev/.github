@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.44 - 2026-02-02
+
+- Release alignment with homestak v0.44
+
 ## v0.26 - 2026-01-17
 
 - Release alignment with homestak v0.26
