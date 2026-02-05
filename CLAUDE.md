@@ -37,15 +37,18 @@ All repos follow consistent CI patterns:
 - **GitHub-hosted**: `ubuntu-latest` for all lint/validation workflows
 - **Self-hosted**: (Future) Required for KVM access (packer builds, integration tests)
 
-## Branch Protection
+## Branch Protection (Rulesets)
 
-All repos enforce branch protection on master:
+All public repos use GitHub Rulesets on master:
 
 | Setting | Value |
 |---------|-------|
-| Require PR | Yes |
+| Require PR | Yes (1 approving review) |
 | Required checks | Repo-specific lint workflow |
-| Admin bypass | Available (use sparingly) |
+| Bypass | OrganizationAdmin (pull_request mode) |
+| Auto-merge | Enabled |
+
+PRs are created by `homestak-bot` so the operator can review and approve. Auto-merge completes the merge after approval.
 
 See [REPO-SETTINGS.md](https://github.com/homestak-dev/homestak-dev/blob/master/docs/REPO-SETTINGS.md) in homestak-dev for full standards.
 
@@ -67,7 +70,7 @@ Update schedule: Weekly
 1. Create `.github/workflows/<name>.yml` in the target repo
 2. Follow existing patterns (trigger on push/PR to master)
 3. Use `ubuntu-latest` runner unless KVM required
-4. Add required check to branch protection after first successful run
+4. Add required check to ruleset after first successful run
 
 ## Related Issues
 
