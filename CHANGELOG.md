@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Update branch protection section for rulesets migration (homestak-dev#185)
+  - Replace classic protection table with rulesets config
+  - Add OrganizationAdmin bypass and auto-merge documentation
+
 ## v0.45 - 2026-02-02
 
 - Release alignment with homestak v0.45
