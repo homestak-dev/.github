@@ -28,8 +28,11 @@ All repos follow consistent CI patterns:
 | Repo | Workflow | Purpose |
 |------|----------|---------|
 | ansible | ansible-lint | Lint playbooks and roles |
+| bootstrap | shellcheck, bats | Lint scripts and run tests |
+| homestak-dev | shellcheck, bats | Lint release.sh and run tests |
 | iac-driver | pylint, pytest | Lint and test Python code |
-| packer | packer validate | Validate HCL templates |
+| packer | shellcheck, bats, packer validate | Lint scripts, run tests, validate templates |
+| site-config | YAML validate | Validate YAML syntax |
 | tofu | tofu validate | Validate OpenTofu modules |
 
 ### Runner Configuration
