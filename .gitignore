@@ -1,0 +1,3 @@
+# CI workflows belong to their respective repos, not the org .github repo.
+# homestak-dev's ci.yml lives on disk here due to workspace overlap.
+workflows/
