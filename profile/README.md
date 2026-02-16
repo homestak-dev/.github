@@ -6,9 +6,11 @@
 
 ### Homelab infrastructure, automated.
 
-You've got the hardware. You've got Proxmox running. Now you want to stop doing everything by hand and start treating your homelab like real infrastructure — repeatable, testable, version-controlled.
+One command. Fresh Proxmox host to running VMs — repeatable, testable, version-controlled.
 
-That's what homestak is for.
+```bash
+curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/install.sh | bash
+```
 
 [![Proxmox](https://img.shields.io/badge/Proxmox-E57000?logo=proxmox&logoColor=white)](https://www.proxmox.com/)
 [![Debian](https://img.shields.io/badge/Debian-A81D33?logo=debian&logoColor=white)](https://www.debian.org/)
@@ -20,111 +22,82 @@ That's what homestak is for.
 
 ---
 
-## Quick Start
+### Declare your topology, let homestak deploy it
+
+Define your infrastructure as a manifest — nodes, types, sizes, parent relationships — and let the orchestration engine handle the rest.
+
+```yaml
+# A PVE hypervisor with a VM running inside it
+nodes:
+  - name: root-pve
+    type: pve
+    preset: vm-large
+    image: pve-9
+
+  - name: app-server
+    type: vm
+    preset: vm-small
+    image: debian-12
+    parent: root-pve
+    execution:
+      mode: pull          # async — self-configures on first boot
+```
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/install.sh | bash
+homestak manifest apply -M my-topology -H my-host
 ```
 
-This installs the `homestak` CLI and clones the core repos. From there, you can configure your Proxmox host, provision VMs, and run integration scenarios.
+The engine walks the node graph, provisions in dependency order, and configures each node. Two deployment models: **synchronous** (push config over SSH, wait for completion) or **asynchronous** (provision with a signed token, node self-configures on first boot). Supports N-level nesting: PVE inside PVE inside PVE, with VMs at any level.
 
 ---
 
-## How It Works
+### What you get
+
+- **Manifest-driven orchestration** — graph-based topologies with N-level nested PVE support
+- **Sync and async deployment** — push config over SSH or let nodes self-configure on first boot
+- **Pre-built VM images** — custom Debian and PVE images that boot in ~16 seconds
+- **Encrypted secrets** — SOPS + age, version-controlled alongside your config
+- **Integration tested** — real Proxmox environments validate the full stack, not just unit tests
+
+---
+
+### How it works
 
 ```
-                    ┌─────────────┐
-                    │  bootstrap  │  ← curl|bash entry point
-                    └──────┬──────┘
-                           │
-    ┌──────────────────────┼──────────────────────┐
-    │                      │                      │
-    ▼                      ▼                      ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ site-config │    │ iac-driver  │    │   ansible   │
-│   secrets   │◄──►│ orchestrate │◄──►│  configure  │
-└─────────────┘    └──────┬──────┘    └─────────────┘
-                          │
-            ┌─────────────┼─────────────┐
-            ▼                           ▼
-     ┌──────────┐                ┌──────────┐
-     │   tofu   │                │  packer  │
-     │ provision│                │   build  │
-     └──────────┘                └──────────┘
+ curl | bash                    site-config (secrets + topology)
+     │                                      │
+     ▼                                      ▼
+ bootstrap ──► iac-driver ──► ansible ──► configured host
+                   │
+                   ├──► tofu ──► provisioned VMs
+                   └──► packer ──► custom images
 ```
 
-**bootstrap** gets you started. **iac-driver** orchestrates multi-step workflows. **ansible** configures hosts. **tofu** provisions VMs. **packer** builds custom images. **site-config** keeps your secrets encrypted and version-controlled.
+Bootstrap installs the CLI and clones the repos. **iac-driver** orchestrates everything — it reads your manifests, resolves config from site-config, and coordinates ansible, tofu, and packer to get you from bare metal to running VMs.
 
 ---
 
-## Typical Workflow
+### Repositories
 
-```
-Fresh Debian/Proxmox Host                   Running VMs
-       │                                         ▲
-       │  curl|bash                              │
-       ▼                                         │
- ┌───────────┐    ┌───────────┐    ┌───────────┐
- │ bootstrap │───►│  ansible  │───►│   tofu    │
- │  install  │    │ configure │    │ provision │
- └───────────┘    └───────────┘    └───────────┘
-```
-
-Start with a fresh Debian or Proxmox host. Bootstrap installs dependencies and the CLI. Ansible configures the host. Tofu provisions your VMs. Rinse and repeat.
+| Repo | Purpose |
+|------|---------|
+| **[bootstrap](https://github.com/homestak-dev/bootstrap)** | Entry point — installs the CLI and clones core repos |
+| **[site-config](https://github.com/homestak-dev/site-config)** | Secrets, manifests, specs, presets, and site-specific config |
+| **[iac-driver](https://github.com/homestak-dev/iac-driver)** | Orchestration engine — manifest-driven node lifecycle |
+| **[ansible](https://github.com/homestak-dev/ansible)** | Playbooks for PVE host and VM configuration |
+| **[tofu](https://github.com/homestak-dev/tofu)** | OpenTofu modules for VM provisioning |
+| **[packer](https://github.com/homestak-dev/packer)** | Custom Debian cloud images (optional) |
 
 ---
 
-## What Can You Do?
+### Design philosophy
 
-```bash
-homestak status                       # Check your installation
-sudo homestak pve-setup               # Configure a Proxmox host
-homestak images download all --publish # Download pre-built VM images
-```
+**Repeatability over flexibility.** Sensible defaults that just work. Tweak everything if you want — but you shouldn't have to.
 
-The `homestak` CLI wraps the underlying tools so you don't have to remember the incantations.
+**Debian-rooted, Proxmox-current.** Built on Debian with Proxmox as the virtualization layer. The architecture leaves room for bare QEMU/KVM if you ever need it.
+
+**Testable infrastructure.** This isn't a collection of scripts. Integration tests spin up real Proxmox environments and validate the full stack — from bootstrap through provisioning to configuration.
 
 ---
-
-## Repositories
-
-| Repo | What it does |
-| --- | --- |
-| [bootstrap](https://github.com/homestak-dev/bootstrap) | Entry point — installs the CLI and clones core repos |
-| [site-config](https://github.com/homestak-dev/site-config) | Your secrets and site-specific config (SOPS + age encrypted) |
-| [ansible](https://github.com/homestak-dev/ansible) | Playbooks for PVE host configuration |
-| [iac-driver](https://github.com/homestak-dev/iac-driver) | Orchestrates multi-step workflows and integration tests |
-| [tofu](https://github.com/homestak-dev/tofu) | OpenTofu modules for VM provisioning |
-| [packer](https://github.com/homestak-dev/packer) | Build custom Debian cloud images (optional) |
-
-Each repo has its own README and `CLAUDE.md` with deeper context.
-
----
-
-## Design Philosophy
-
-**Repeatability over flexibility.** We prefer conventions that "just work" over infinite configurability. If you want to tweak everything, you can — but the defaults should get you running.
-
-**Debian-rooted, Proxmox-current.** The platform is built on Debian, with Proxmox as the virtualization layer. The architecture leaves room for bare QEMU/KVM on Debian if you ever need it.
-
-**Testable infrastructure.** The integration scenarios in iac-driver actually spin up nested Proxmox environments to validate the full stack. This isn't a collection of scripts — it's tested automation.
-
----
-
-## Third-Party Acknowledgments
-
-homestak builds on excellent open-source projects:
-
-| Component | Third-Party | Purpose |
-|-----------|-------------|---------|
-| ansible | [lae.proxmox](https://github.com/lae/ansible-role-proxmox) | Proxmox VE installation on Debian |
-| tofu | [bpg/proxmox](https://github.com/bpg/terraform-provider-proxmox) | OpenTofu provider for Proxmox API |
-| packer | [hashicorp/qemu](https://github.com/hashicorp/packer-plugin-qemu) | QEMU builder plugin |
-
-See individual repo READMEs for complete dependency lists.
-
----
-
-## License
 
 Apache 2.0
