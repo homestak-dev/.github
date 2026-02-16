@@ -77,10 +77,9 @@ Start with a fresh Debian or Proxmox host. Bootstrap installs dependencies and t
 ## What Can You Do?
 
 ```bash
-homestak pve-setup                    # Configure a Proxmox host
-homestak scenario vm-roundtrip        # Provision → verify → destroy a VM
-homestak playbook user -e local_user=me
 homestak status                       # Check your installation
+sudo homestak pve-setup               # Configure a Proxmox host
+homestak images download all --publish # Download pre-built VM images
 ```
 
 The `homestak` CLI wraps the underlying tools so you don't have to remember the incantations.
