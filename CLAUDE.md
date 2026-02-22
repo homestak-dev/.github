@@ -28,12 +28,12 @@ All repos follow consistent CI patterns:
 | Repo | Workflow | Purpose |
 |------|----------|---------|
 | ansible | ansible-lint | Lint playbooks and roles |
-| bootstrap | shellcheck, bats | Lint scripts and run tests |
+| bootstrap | shellcheck, pylint, bats | Lint scripts, lint Python, run tests |
 | homestak-dev | shellcheck, bats | Lint release.sh and run tests |
 | iac-driver | pylint, pytest | Lint and test Python code |
 | packer | shellcheck, bats, packer validate | Lint scripts, run tests, validate templates |
-| site-config | YAML validate | Validate YAML syntax |
-| tofu | tofu validate | Validate OpenTofu modules |
+| site-config | YAML/schema validate, bats | Validate YAML + JSON schemas, run tests |
+| tofu | tofu fmt, tofu validate | Check formatting, validate modules |
 
 ### Runner Configuration
 
@@ -57,9 +57,14 @@ See [REPO-SETTINGS.md](https://github.com/homestak-dev/homestak-dev/blob/master/
 
 ## Dependabot
 
-Enabled on all repos for:
-- GitHub Actions version updates
-- Language-specific dependency updates (pip, npm where applicable)
+Enabled on repos with external dependencies:
+
+| Repo | Ecosystems |
+|------|------------|
+| ansible | GitHub Actions |
+| iac-driver | pip, GitHub Actions |
+| tofu | terraform (bpg/proxmox provider), GitHub Actions |
+| packer | GitHub Actions |
 
 Update schedule: Weekly
 
