@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.50 - 2026-02-22
+
 ### Changed
 - Update branch protection section for rulesets migration (homestak-dev#185)
   - Replace classic protection table with rulesets config
