@@ -9,7 +9,7 @@
 One command. Fresh Proxmox host to running VMs — repeatable, testable, version-controlled.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/homestak-dev/bootstrap/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/homestak/bootstrap/master/install | bash
 ```
 
 [![Proxmox](https://img.shields.io/badge/Proxmox-E57000?logo=proxmox&logoColor=white)](https://www.proxmox.com/)
@@ -64,7 +64,7 @@ The engine walks the node graph, provisions in dependency order, and configures 
 ### How it works
 
 ```
- curl | bash                    site-config (secrets + topology)
+ curl | bash                    config (secrets + topology)
      │                                      │
      ▼                                      ▼
  bootstrap ──► iac-driver ──► ansible ──► configured host
@@ -73,20 +73,33 @@ The engine walks the node graph, provisions in dependency order, and configures 
                    └──► packer ──► custom images
 ```
 
-Bootstrap installs the CLI and clones the repos. **iac-driver** orchestrates everything — it reads your manifests, resolves config from site-config, and coordinates ansible, tofu, and packer to get you from bare metal to running VMs.
+Bootstrap installs the CLI and clones the repos. **iac-driver** orchestrates everything — it reads your manifests, resolves config, and coordinates ansible, tofu, and packer to get you from bare metal to running VMs.
 
 ---
 
 ### Repositories
 
+**[homestak](https://github.com/homestak)** — Core
+
 | Repo | Purpose |
 |------|---------|
-| **[bootstrap](https://github.com/homestak-dev/bootstrap)** | Entry point — installs the CLI and clones core repos |
-| **[site-config](https://github.com/homestak-dev/site-config)** | Secrets, manifests, specs, presets, and site-specific config |
-| **[iac-driver](https://github.com/homestak-dev/iac-driver)** | Orchestration engine — manifest-driven node lifecycle |
-| **[ansible](https://github.com/homestak-dev/ansible)** | Playbooks for PVE host and VM configuration |
-| **[tofu](https://github.com/homestak-dev/tofu)** | OpenTofu modules for VM provisioning |
-| **[packer](https://github.com/homestak-dev/packer)** | Custom Debian cloud images (optional) |
+| **[bootstrap](https://github.com/homestak/bootstrap)** | Entry point — installs the CLI and clones core repos |
+| **[config](https://github.com/homestak/config)** | Secrets, manifests, specs, presets, and site-specific config |
+
+**[homestak-iac](https://github.com/homestak-iac)** — Infrastructure automation
+
+| Repo | Purpose |
+|------|---------|
+| **[iac-driver](https://github.com/homestak-iac/iac-driver)** | Orchestration engine — manifest-driven node lifecycle |
+| **[ansible](https://github.com/homestak-iac/ansible)** | Playbooks for PVE host and VM configuration |
+| **[tofu](https://github.com/homestak-iac/tofu)** | OpenTofu modules for VM provisioning |
+| **[packer](https://github.com/homestak-iac/packer)** | Custom Debian cloud images (optional) |
+
+**[homestak-dev](https://github.com/homestak-dev)** — Developer experience
+
+| Repo | Purpose |
+|------|---------|
+| **[meta](https://github.com/homestak-dev/meta)** | Release scripts, docs, development process |
 
 ---
 
