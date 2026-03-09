@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v0.55 - 2026-03-08
+
+### Changed
+- Add bare-metal CI workflow to Current Workflows table
+- Sort workflows table by org, fix meta naming
+
 ## v0.54 - 2026-03-08
 
 ### Changed
