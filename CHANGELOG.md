@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed
+- Update CLAUDE.md references for release script rename (meta#313)
+
 ## v0.53 - 2026-03-06
 
 No changes.
