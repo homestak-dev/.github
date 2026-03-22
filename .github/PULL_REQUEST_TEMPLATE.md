@@ -12,13 +12,13 @@
 
 ## Checklist
 
-See [50-merge.md](https://github.com/homestak-dev/meta/blob/master/docs/lifecycle/50-merge.md) for full guidance.
+See [50-merge.md](https://github.com/homestak-dev/meta/blob/master/docs/process/50-merge.md) for full guidance.
 
 - [ ] Tests pass locally
 - [ ] Integration test scenario identified and passes
 - [ ] External tool assumptions verified (test actual CLI behavior)
 - [ ] CHANGELOG.md updated (if user-facing change)
-- [ ] CLAUDE.md updated (if architecture/workflow changed) - see [CLAUDE-GUIDELINES.md](https://github.com/homestak-dev/meta/blob/master/docs/CLAUDE-GUIDELINES.md)
+- [ ] CLAUDE.md updated (if architecture/workflow changed) - see [claude-guidelines.md](https://github.com/homestak-dev/meta/blob/master/docs/standards/claude-guidelines.md)
 - [ ] Performance claims measured (before/after timing, if applicable)
 - [ ] Prerequisites documented (configs, artifacts, permissions)
 
