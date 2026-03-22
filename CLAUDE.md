@@ -54,7 +54,7 @@ All public repos use GitHub Rulesets on master:
 
 PRs are created by `homestak-bot` so the operator can review and approve. Auto-merge completes the merge after approval.
 
-See [REPO-SETTINGS.md](https://github.com/homestak-dev/meta/blob/master/docs/REPO-SETTINGS.md) in meta for full standards.
+See [repo-settings.md](https://github.com/homestak-dev/meta/blob/master/docs/standards/repo-settings.md) in meta for full standards.
 
 ## Dependabot
 
